@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% block title %}چت با دستیار راستاد{% endblock %}
+{% block content %}
+<h1>💬 دستیار هوشمند راستاد</h1>
+<p style="color:#666;">پیام خود را وارد کنید تا دسته‌بندی و پاسخ مناسب دریافت کنید.</p>
+
+<!-- User info section (stays constant across tabs) -->
+<div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px; border:1px solid #dee2e6;">
+    <h3 style="margin-top:0; color:#1a1a2e;">👤 اطلاعات کاربر</h3>
+    <div style="display:flex; gap:15px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:200px;">
+            <label for="user_id">شناسه کاربر (User ID)</label>
+            <input type="text" id="user_id" name="user_id" required placeholder="مثلاً: 12345">
+        </div>
+        <div style="flex:1; min-width:200px;">
+            <label for="name">نام کاربر</label>
+            <input type="text" id="name" name="name" required placeholder="مثلاً: علی">
+        </div>
+    </div>
+</div>
+
+<!-- Tabs -->
+<div class="tab-container">
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-custom')">✍️ پیام دلخواه</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-prebuilt')">📋 موضوعات آماده</button>
+    </div>
+
+    <!-- Tab 1: Custom message -->
+    <div id="tab-custom" class="tab-content active">
+        <form method="POST" action="/api/message-form" onsubmit="return copyUserInfo(this)">
+            <input type="hidden" name="user_id" id="custom_user_id">
+            <input type="hidden" name="name" id="custom_name">
+            
+            <label for="message">پیام شما</label>
+            <textarea id="message" name="message" required placeholder="سوال یا درخواست خود را بنویسید..."></textarea>
+            
+            <button type="submit">📨 ارسال پیام</button>
+        </form>
+    </div>
+
+    <!-- Tab 2: Pre-built topics -->
+    <div id="tab-prebuilt" class="tab-content">
+        <form method="POST" action="/api/message-form" onsubmit="return copyUserInfo(this)">
+            <input type="hidden" name="user_id" id="prebuilt_user_id">
+            <input type="hidden" name="name" id="prebuilt_name">
+            <input type="hidden" name="message" id="prebuilt_message">
+            
+            <label for="topic-select">انتخاب موضوع</label>
+            <select id="topic-select" onchange="updatePrebuiltMessage()">
+                <option value="">-- یک موضوع انتخاب کنید --</option>
+                <option value="خدمات VIP راستاد چیست؟">سوال درباره خدمات VIP</option>
+                <option value="چطور در صرافی ثبت‌نام کنم؟">راهنمایی ثبت‌نام در صرافی</option>
+                <option value="می‌خواهم KOL بشم">درخواست همکاری KOL</option>
+                <option value="مشکل پرداخت دارم">مشکل در پرداخت</option>
+                <option value="پول دادم ولی اشتراکم فعال نشده">اشتراک فعال نشده</option>
+                <option value="Trade Assist چیست؟">سوال درباره Trade Assist</option>
+                <option value="چطور با پشتیبانی ارتباط بگیرم؟">تماس با پشتیبانی</option>
+                <option value="می‌خواهم بدونم شرایط همکاری چیه؟">شرایط همکاری</option>
+                <option value="دوره‌های آموزشی راستاد چیه؟">دوره‌های آموزشی</option>
+                <option value="ربات معامله‌گر چطور کار می‌کنه؟">ربات معامله‌گر</option>
+            </select>
+            
+            <div id="preview-message" style="margin-top:15px; padding:12px; background:#fff9c4; border-radius:4px; display:none;">
+                <strong>📝 پیام انتخاب‌شده:</strong>
+                <p id="preview-text" style="margin:5px 0;"></p>
+            </div>
+            
+            <button type="submit" id="topic-submit-btn" disabled>📨 ارسال پیام</button>
+        </form>
+    </div>
+</div>
+
+<!-- Result section -->
+{% if result %}
+<div class="result">
+    <h3>✅ نتیجه</h3>
+    <p><strong>👤 کاربر:</strong> {{ result.name }} ({{ result.user_id }})</p>
+    <p><strong>💬 پیام:</strong> {{ result.message }}</p>
+    <p><strong>📝 پاسخ:</strong> {{ result.reply }}</p>
+    <p>
+        <strong>🏷️ Intent:</strong> <span class="badge badge-intent">{{ result.intent }}</span>
+        <strong>👤 Segment:</strong> <span class="badge badge-segment">{{ result.user_segment }}</span>
+        {% if result.needs_human_support %}
+            <span class="badge badge-human">⚠️ نیاز به پشتیبانی انسانی</span>
+        {% else %}
+            <span class="badge" style="background:#e8f5e9; color:#2e7d32;">✅ خودکار</span>
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+<style>
+    /* Tab styles */
+    .tab-container {
+        margin-top: 20px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .tab-buttons {
+        display: flex;
+        background: #f1f3f5;
+        border-bottom: 1px solid #dee2e6;
+    }
+    .tab-btn {
+        flex: 1;
+        padding: 12px 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        color: #666;
+        transition: all 0.3s;
+        border-bottom: 3px solid transparent;
+    }
+    .tab-btn:hover {
+        background: #e9ecef;
+        color: #333;
+    }
+    .tab-btn.active {
+        color: #1a1a2e;
+        background: white;
+        border-bottom: 3px solid #1a1a2e;
+    }
+    .tab-content {
+        display: none;
+        padding: 20px;
+        background: white;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    
+    /* Preview message */
+    #preview-message {
+        animation: fadeIn 0.3s;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Disabled button */
+    button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+// Store user info in sessionStorage so it persists across tab switches
+function saveUserInfo() {
+    sessionStorage.setItem('user_id', document.getElementById('user_id').value);
+    sessionStorage.setItem('name', document.getElementById('name').value);
+}
+
+function loadUserInfo() {
+    const savedUserId = sessionStorage.getItem('user_id');
+    const savedName = sessionStorage.getItem('name');
+    if (savedUserId) document.getElementById('user_id').value = savedUserId;
+    if (savedName) document.getElementById('name').value = savedName;
+}
+
+// Save user info on input change
+document.getElementById('user_id').addEventListener('input', saveUserInfo);
+document.getElementById('name').addEventListener('input', saveUserInfo);
+
+// Load saved info on page load
+window.addEventListener('load', loadUserInfo);
+
+// Copy user info to hidden fields before form submit
+function copyUserInfo(form) {
+    const userId = document.getElementById('user_id').value;
+    const name = document.getElementById('name').value;
+    
+    if (!userId || !name) {
+        alert('لطفاً شناسه کاربر و نام را وارد کنید');
+        return false;
+    }
+    
+    // Find hidden fields in this form
+    const hiddenUserId = form.querySelector('input[name="user_id"][type="hidden"]');
+    const hiddenName = form.querySelector('input[name="name"][type="hidden"]');
+    
+    if (hiddenUserId) hiddenUserId.value = userId;
+    if (hiddenName) hiddenName.value = name;
+    
+    saveUserInfo();
+    return true;
+}
+
+// Tab switching
+function switchTab(event, tabId) {
+    // Update active button
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Show selected tab, hide others
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    
+    // Save user info
+    saveUserInfo();
+}
+
+// Pre-built message handling
+function updatePrebuiltMessage() {
+    const select = document.getElementById('topic-select');
+    const message = select.value;
+    const preview = document.getElementById('preview-message');
+    const previewText = document.getElementById('preview-text');
+    const submitBtn = document.getElementById('topic-submit-btn');
+    const hiddenMessage = document.getElementById('prebuilt_message');
+    
+    if (message) {
+        preview.style.display = 'block';
+        previewText.textContent = message;
+        hiddenMessage.value = message;
+        submitBtn.disabled = false;
+    } else {
+        preview.style.display = 'none';
+        hiddenMessage.value = '';
+        submitBtn.disabled = true;
+    }
+    
+    // Save user info
+    saveUserInfo();
+}
+</script>
+{% endblock %}

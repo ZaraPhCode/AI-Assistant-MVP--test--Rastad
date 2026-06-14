@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}لیست کاربران{% endblock %}
+{% block content %}
+<h1>👥 کاربران ثبت‌شده</h1>
+<p style="color:#666;">برای مشاهده کاربران و تاریخچه پیام‌ها از API استفاده کنید:</p>
+
+<div style="background:#f5f5f5; padding:15px; border-radius:4px; margin-top:15px;">
+    <p><strong>📋 لیست کاربران:</strong></p>
+    <code>GET /api/users</code>
+    <button class="test-btn" onclick="fetchUsers()" style="margin-right:10px;">🔄 بارگذاری</button>
+</div>
+
+<div id="users-table"></div>
+
+<div style="background:#f5f5f5; padding:15px; border-radius:4px; margin-top:15px;">
+    <p><strong>📨 تاریخچه پیام‌های یک کاربر:</strong></p>
+    <code>GET /api/users/{user_id}/messages</code>
+    <br><br>
+    <input type="text" id="search-user-id" placeholder="شناسه کاربر" style="width:200px; display:inline;">
+    <button class="test-btn" onclick="fetchUserMessages()">🔍 جستجو</button>
+</div>
+
+<div id="messages-table"></div>
+
+<script>
+async function fetchUsers() {
+    try {
+        const resp = await fetch('/api/users');
+        const users = await resp.json();
+        let html = '<table><tr><th>User ID</th><th>نام</th><th>Segment</th><th>تاریخ عضویت</th><th>آخرین بازدید</th></tr>';
+        users.forEach(u => {
+            html += `<tr>
+                <td>${u.user_id}</td>
+                <td>${u.name}</td>
+                <td><span class="badge badge-segment">${u.segment}</span></td>
+                <td>${new Date(u.created_at).toLocaleString('fa-IR')}</td>
+                <td>${new Date(u.last_seen_at).toLocaleString('fa-IR')}</td>
+            </tr>`;
+        });
+        html += '</table>';
+        if (users.length === 0) html = '<p style="color:#999; margin-top:10px;">هنوز کاربری ثبت نشده است.</p>';
+        document.getElementById('users-table').innerHTML = html;
+    } catch(e) {
+        document.getElementById('users-table').innerHTML = '<div class="alert alert-error">خطا در بارگذاری</div>';
+    }
+}
+
+async function fetchUserMessages() {
+    const uid = document.getElementById('search-user-id').value.trim();
+    if (!uid) return alert('لطفاً شناسه کاربر را وارد کنید');
+    try {
+        const resp = await fetch(`/api/users/${uid}/messages`);
+        if (!resp.ok) throw new Error('Not found');
+        const msgs = await resp.json();
+        let html = '<h4 style="margin-top:15px;">📨 پیام‌های کاربر: ' + uid + '</h4><table><tr><th>#</th><th>پیام کاربر</th><th>پاسخ</th><th>Intent</th><th>تاریخ</th></tr>';
+        msgs.forEach(m => {
+            html += `<tr>
+                <td>${m.id}</td>
+                <td>${m.user_message}</td>
+                <td>${m.assistant_reply.substring(0, 50)}...</td>
+                <td><span class="badge badge-intent">${m.intent}</span></td>
+                <td>${new Date(m.created_at).toLocaleString('fa-IR')}</td>
+            </tr>`;
+        });
+        html += '</table>';
+        document.getElementById('messages-table').innerHTML = html;
+    } catch(e) {
+        document.getElementById('messages-table').innerHTML = '<div class="alert alert-error">کاربر یافت نشد یا خطا در بارگذاری</div>';
+    }
+}
+</script>
+{% endblock %}
