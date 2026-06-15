@@ -70,9 +70,9 @@ rastad-ai-assistant/
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Classifier │     ← Rule-based (keyword matching)
-│ تشخیص intent │    Fallback: Claude API (در صورت فعال بودن)
-│ تشخیص segment│
+│ Classifier      │ ← Rule-based (keyword matching)
+│ تشخیص intent    │ Fallback: Claude API (در صورت فعال بودن)
+│ تشخیص segment   │
 └────────┬────────┘
 ↓
 ┌─────────────────┐
