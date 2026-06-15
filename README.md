@@ -66,7 +66,7 @@ rastad-ai-assistant/
 کاربر → [UI/API] → POST /api/message
 ↓
 ┌─────────────────┐
-│ Validation      │ ← Pydantic (user_id, name, message اجباری)
+│ Validation      │      ← Pydantic (user_id, name, message اجباری)
 └────────┬────────┘
 ↓
 ┌─────────────────┐
