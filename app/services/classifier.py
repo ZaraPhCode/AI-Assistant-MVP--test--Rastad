@@ -45,24 +45,55 @@ SEGMENT_MAP = {
 }
 
 def classify_message(message: str) -> tuple[str, str, bool]:
-    """تشخیص intent, segment و نیاز به پشتیبانی انسانی"""
+    """تشخیص intent, segment و نیاز به پشتیبانی انسانی
+    
+    Flow:
+    1. Try rule-based keyword matching first (fast, no API cost)
+    2. If not matched AND LLM provider is not mock:
+       → Call LLM (Claude/OpenAI) to detect intent
+    3. Map intent to segment
+    4. Determine if human support is needed
+    """
     intent = "unknown"
     message_lower = message.lower()
     
-    # Priority matching - check support first (it has higher priority)
+    # Step 1: Rule-based keyword matching
     for key, keywords in KEYWORD_MAP.items():
         if any(kw in message_lower for kw in keywords):
             intent = key
+            logger.info(f"Intent detected via rule-based: {intent}")
             break
 
-    # fallback to LLM if available and not mock
+    # Step 2: Fallback to LLM if rule-based failed and LLM is available
     if intent == "unknown" and llm_service.provider != "mock":
+        logger.info("Rule-based failed, falling back to LLM for intent detection")
         intent = _classify_with_llm(message)
 
+    # Step 3: Map intent to segment
     segment = SEGMENT_MAP.get(intent, "new_user")
+    
+    # Step 4: Determine if human support is needed
     needs_human = intent in ["support_request", "unknown"]
+    
+    logger.info(f"Final classification - intent: {intent}, segment: {segment}, needs_human: {needs_human}")
     return intent, segment, needs_human
 
 def _classify_with_llm(message: str) -> str:
-    # placeholder for LLM-based intent detection
-    return "unknown"
+    """Use LLM service to detect intent when rule-based fails
+    
+    This function is called when:
+    - Rule-based keyword matching returned "unknown"
+    - LLM_PROVIDER is set to "claude" or "openai" (not "mock")
+    
+    The LLM service handles:
+    - Calling Claude API / OpenAI API
+    - Graceful fallback to "unknown" on error
+    - Logging the result
+    """
+    try:
+        intent = llm_service.detect_intent(message)
+        logger.info(f"LLM detected intent: {intent}")
+        return intent
+    except Exception as e:
+        logger.error(f"LLM intent detection failed: {e}")
+        return "unknown"

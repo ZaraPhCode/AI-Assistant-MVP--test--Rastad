@@ -21,16 +21,6 @@ class LLMService:
                 logger.error("anthropic package not installed. Install with: pip install anthropic")
             except Exception as e:
                 logger.error(f"Failed to initialize Claude client: {e}")
-        
-        if OPENAI_API_KEY and self.provider == "openai":
-            try:
-                from openai import OpenAI
-                self._openai_client = OpenAI(api_key=OPENAI_API_KEY)
-                logger.info("OpenAI client initialized successfully")
-            except ImportError:
-                logger.error("openai package not installed. Install with: pip install openai")
-            except Exception as e:
-                logger.error(f"Failed to initialize OpenAI client: {e}")
 
     def generate_reply(self, intent: str, knowledge: str, user_message: str) -> str:
         """تولید پاسخ بر اساس intent و دانش بازیابی‌شده"""
@@ -38,8 +28,7 @@ class LLMService:
             return self._mock_reply(intent, knowledge)
         elif self.provider == "claude":
             return self._claude_reply(intent, knowledge, user_message)
-        elif self.provider == "openai":
-            return self._openai_reply(intent, knowledge, user_message)
+
         else:
             logger.warning(f"Unknown LLM provider: {self.provider}, falling back to mock")
             return self._mock_reply(intent, knowledge)
@@ -48,8 +37,7 @@ class LLMService:
         """تشخیص intent با استفاده از LLM"""
         if self.provider == "claude" and self._claude_client:
             return self._claude_detect_intent(message)
-        elif self.provider == "openai" and self._openai_client:
-            return self._openai_detect_intent(message)
+
         return "unknown"
 
     # ------------------------------------------------------------------
