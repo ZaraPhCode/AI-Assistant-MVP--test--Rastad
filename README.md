@@ -224,9 +224,9 @@ elif intent == "support_request":
 
 دستور /newbot را بفرستید
 
-یک نام برای ربات انتخاب کنید (مثلاً: "Rastad AI Assistant")
+یک نام برای ربات انتخاب کنید (مثلاً: "Rastad_test_bot")
 
-یک username برای ربات انتخاب کنید (مثلاً: Rastad_test_bot)
+یک username برای ربات انتخاب کنید (مثلاً: Rastad_job_test_bot)
 
 Token دریافتی را یادداشت کنید (چیزی شبیه: 123456:ABCdef...)
 
