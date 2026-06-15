@@ -191,7 +191,8 @@ elif intent == "support_request":
 ذخیره پیام کاربر، پاسخ دستیار، intent، needs_human_support
 
 # نصب و اجرا
-پیش‌نیازها
+پیش‌نیازها:
+
 Docker و Docker Compose
 
 (برای اجرای محلی: Python 3.12 + PostgreSQL)
