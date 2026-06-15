@@ -7,3 +7,6 @@ pydantic==2.10.3
 httpx==0.28.1
 jinja2==3.1.4
 python-multipart==0.0.18
+pytest
+anthropic==0.39.0
+requests==2.32.3
