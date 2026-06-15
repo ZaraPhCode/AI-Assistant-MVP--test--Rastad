@@ -104,7 +104,7 @@ JSON response to user
 |------|----------|--------|
 | **Backend Framework** | FastAPI 0.115 | async، سریع، با validation خودکار |
 | **زبان برنامه‌نویسی** | Python 3.12 | |
-| **دیتابیس** | PostgreSQL 15 | (SQLite هم پشتیبانی می‌شود) |
+| **دیتابیس** | PostgreSQL 15 |  |
 | **ORM** | SQLAlchemy 2.0 | مدیریت migrations و queries |
 | **Validation** | Pydantic 2.10 | اعتبارسنجی خودکار ورودی‌ها |
 | **LLM Provider** | Claude API / Mock | قابل تعویض بدون تغییر کد |
@@ -142,7 +142,7 @@ JSON response to user
 | `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
 | `unknown` | (هیچ‌کدام) | `new_user` |
 
-**Fallback به Claude:**
+##### **Fallback به Claude:**
 اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
 ### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
