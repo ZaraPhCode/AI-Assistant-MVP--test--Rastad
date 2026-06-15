@@ -365,8 +365,8 @@ UI ساده برای تست دستی
 مرحله ۱: تنظیم متغیرهای محیطی
 فایل .env را ویرایش کنید:
 
-env
-```text
+
+```env
 LLM_PROVIDER=claude
 CLAUDE_API_KEY=sk-ant-api03-your-actual-key-here
 ```
