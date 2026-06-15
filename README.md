@@ -142,7 +142,9 @@ JSON response to user
 | `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
 | `unknown` | (هیچ‌کدام) | `new_user` |
 
-##### **Fallback به Claude:**
+<div dir='rtl'>
+**Fallback به Claude:**
+</div>
 اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
 ### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
