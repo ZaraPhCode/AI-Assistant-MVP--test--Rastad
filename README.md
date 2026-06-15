@@ -24,7 +24,6 @@
 ## معماری و ساختار پروژه
 
 ### ساختار پوشه‌ها
-<div dir="ltr">
 ```
 AI_Assistant_MVP_test_Rastad/
 ├── app/ # Main application code
@@ -60,7 +59,6 @@ AI_Assistant_MVP_test_Rastad/
 ├── pytest.ini # Pytest configuration
 └── README.md # This file
 ```
-</div>
 
 ### نمودار جریان پردازش پیام
 
