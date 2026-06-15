@@ -183,10 +183,10 @@ elif intent == "support_request":
 
 یادداشت توکن دریافتی  (چیزی شبیه: 123456:ABCdef...)
 
-مرحله ۲: نصب و اجرای ngrok
+مرحله ۲: نصب و اجرای ngrok:
 دانلود از ngrok.com/download نسخه Windows
 
-استخراج فایل zip را در C:\ngrok\ 
+استخراج فایل zip در C:\ngrok\ 
 
 در PowerShell:
 
@@ -211,7 +211,8 @@ BASE_URL=https://db8f-216-147-121-178.ngrok-free.app
 SET_TELEGRAM_WEBHOOK=true
 ```
 با انجام این مراحل و پس از اجرای اپلیکیشن روبات در آدرس زیر در دسترس خواهد بود:
-http://t.me/Rastad_job_test_bot
+
+https://t.me/Rastad_job_test_bot
 
 # نصب و اجرا
 پیش‌نیازها:
