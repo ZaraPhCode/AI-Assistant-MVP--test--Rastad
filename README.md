@@ -25,6 +25,7 @@
 ## 🏗️ معماری و ساختار پروژه
 
 ### ساختار پوشه‌ها
+```
 rastad-ai-assistant/
 ├── app/ # کد اصلی برنامه
 │ ├── init.py
@@ -58,7 +59,7 @@ rastad-ai-assistant/
 ├── .gitignore
 ├── pytest.ini # تنظیمات pytest
 └── README.md # همین فایل
-
+```
 
 ### نمودار جریان پردازش پیام
 کاربر → [UI/API] → POST /api/message
