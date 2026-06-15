@@ -195,9 +195,7 @@ elif intent == "support_request":
 
 Docker و Docker Compose
 
-(برای اجرای محلی: Python 3.12 + PostgreSQL)
-
-### روش ۱: اجرا با Docker Compose (پیشنهادی)
+### روش اجرا:
 
 ```
 # کلون کردن پروژه
@@ -216,22 +214,8 @@ docker-compose ps
 
  تست از طریق UI ساده در همین آدرس قابل دسترسی است.
 
-### روش ۲: اجرای محلی (بدون Docker)
-
-```
-# نصب وابستگی‌ها
-pip install -r requirements.txt
-
-# تنظیم متغیرهای محیطی (کپی از .env.example)
-cp .env.example .env
-# فایل .env را با تنظیمات خود ویرایش کنید
-
-# اجرا
-uvicorn app.main:app --reload
-```
-
-### روش ۳: اجرای تست‌ها
-از داخل کانتینر Docker:
+### اجرای تست‌ها:
+##### از داخل کانتینر Docker:
 ```
 docker exec -it rastad-job-application-app-1 bash
 pytest tests/test_endpoints.py -v
@@ -246,6 +230,40 @@ docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py::tes
 ```
 docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -k "test_vip_message or test_exchange_registration or test_kol_collaboration or test_support_request or test_general_question"
 ```
+##### تست بصورت دستی:
+
+تست ۱: سوال درباره خدمات VIP
+
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"12345","name":"Ali","message":"خدمات VIP راستاد چیست؟"}'
+  ```
+
+تست ۲: راهنمایی ثبت‌نام صرافی
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"67890","name":"Sara","message":"چطور در صرافی ثبت‌نام کنم؟"}'
+  ```
+تست ۳: درخواست همکاری KOL
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"11111","name":"Reza","message":"می‌خواهم KOL بشم"}'
+  ```
+تست ۴: مشکل پرداخت
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"22222","name":"Maryam","message":"پول دادم ولی اشتراکم فعال نشده"}'
+  ```
+تست ۵: سوال عمومی
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"33333","name":"Hossein","message":"Trade Assist چیست؟"}'
+  ```
 
 # API Endpoints
 `POST /api/message`  
@@ -321,40 +339,6 @@ Health check
 `GET /` و `GET /users-page`
 
 UI ساده برای تست دستی
-
-### نمونه Request و Response
-تست ۱: سوال درباره خدمات VIP
-
-```bash
-curl -X POST http://localhost:8000/api/message \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"12345","name":"Ali","message":"خدمات VIP راستاد چیست؟"}'
-  ```
-
-تست ۲: راهنمایی ثبت‌نام صرافی
-```bash
-curl -X POST http://localhost:8000/api/message \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"67890","name":"Sara","message":"چطور در صرافی ثبت‌نام کنم؟"}'
-  ```
-تست ۳: درخواست همکاری KOL
-```bash
-curl -X POST http://localhost:8000/api/message \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"11111","name":"Reza","message":"می‌خواهم KOL بشم"}'
-  ```
-تست ۴: مشکل پرداخت
-```bash
-curl -X POST http://localhost:8000/api/message \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"22222","name":"Maryam","message":"پول دادم ولی اشتراکم فعال نشده"}'
-  ```
-تست ۵: سوال عمومی
-```bash
-curl -X POST http://localhost:8000/api/message \
-  -H "Content-Type: application/json" \
-  -d '{"user_id":"33333","name":"Hossein","message":"Trade Assist چیست؟"}'
-  ```
 
 ###   ❌ موارد پیاده‌سازی نشده و دلایل
 ##### ۱. احراز هویت (Authentication)
