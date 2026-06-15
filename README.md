@@ -178,21 +178,15 @@ elif intent == "support_request":
 - **ذخیره‌سازی خودکار**: تمام مکالمات در دیتابیس PostgreSQL ذخیره می‌شوند
 
 ### راه‌اندازی ربات تلگرام با ngrok
-مرحله ۱: ساخت ربات تلگرام
-در تلگرام، به @BotFather پیام دهید
+مرحله ۱: ساخت ربات تلگرام توسط @BotFather
+تنظیم نام، یوزرنیم و دریافت توکن
 
-دستور /newbot را بفرستید
-
-یک نام برای ربات انتخاب کنید (مثلاً: "Rastad_test_bot")
-
-یک username برای ربات انتخاب کنید (مثلاً: Rastad_job_test_bot)
-
-Token دریافتی را یادداشت کنید (چیزی شبیه: 123456:ABCdef...)
+Token یادداشت توکن دریافتی  (چیزی شبیه: 123456:ABCdef...)
 
 مرحله ۲: نصب و اجرای ngrok
-از ngrok.com/download نسخه Windows را دانلود کنید
+دانلود از ngrok.com/download نسخه Windows
 
-فایل zip را در C:\ngrok\ استخراج کنید
+استخراج فایل zip را در C:\ngrok\ 
 
 در PowerShell:
 
@@ -201,12 +195,12 @@ cd C:\ngrok
 .\ngrok.exe http 8000
 ```
 
-آدرس فوروارد شده را کپی کنید (مثلاً: https://db8f-216-147-121-178.ngrok-free.app)
+کپی آدرس فوروارد شده را (مثلاً: https://db8f-216-147-121-178.ngrok-free.app)
 
 با توجه به اینکه ngrok نسبت به آی پی اتصالی حساس است باید وی پی ان روشن باشد!
 
 مرحله ۳: تنظیم فایل .env
-فایل .env را با مقادیر واقعی ویرایش کنید:
+ویرایش فایل .env با مقادیر واقعی:
 
 ```env
 DATABASE_URL=postgresql://rastad:rastadpass@localhost:5432/rastad_db
@@ -216,7 +210,8 @@ TELEGRAM_BOT_TOKEN=8391936987:AAEqtzQNTKfirqCPKVoo03tOQTT5jscwkac
 BASE_URL=https://db8f-216-147-121-178.ngrok-free.app
 SET_TELEGRAM_WEBHOOK=true
 ```
-
+با انجام این مراحل و پس از اجرای اپلیکیشن روبات در آدرس زیر در دسترس خواهد بود:
+http://t.me/Rastad_job_test_bot
 
 # نصب و اجرا
 پیش‌نیازها:
