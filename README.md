@@ -250,7 +250,6 @@ docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -
 POST /api/message
 پردازش پیام کاربر و دریافت پاسخ
 Request Body:
-
 ```json
 {
   "user_id": "12345",
@@ -258,3 +257,61 @@ Request Body:
   "message": "خدمات VIP راستاد چیست؟"
 }
 ```
+
+Response (200):
+```json
+{
+  "reply": "خدمات VIP راستاد شامل: تحلیل‌های اختصاصی روزانه بازار، راهنمایی معاملاتی ویژه اعضا، ...",
+  "intent": "vip_question",
+  "user_segment": "vip_interest",
+  "needs_human_support": false
+}
+```
+
+GET /api/users
+لیست تمام کاربران ثبت‌شده
+
+Response (200):
+```json
+[
+  {
+    "user_id": "12345",
+    "name": "Ali",
+    "segment": "vip_interest",
+    "created_at": "2025-03-24T11:37:21",
+    "last_seen_at": "2025-03-24T11:40:20"
+  }
+]
+```
+
+GET /api/users/{user_id}/messages
+تاریخچه پیام‌های یک کاربر خاص
+
+Response (200):
+
+```json
+[
+  {
+    "id": 1,
+    "user_id": "12345",
+    "user_message": "خدمات VIP راستاد چیست؟",
+    "assistant_reply": "خدمات VIP راستاد شامل...",
+    "intent": "vip_question",
+    "needs_human_support": false,
+    "created_at": "2025-03-24T11:37:21"
+  }
+]
+```
+Error (404):
+
+```json
+{
+  "detail": "User not found"
+}
+```
+
+`GET /api/`
+Health check
+
+GET / و GET /users-page
+UI ساده برای تست دستی
