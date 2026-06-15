@@ -320,3 +320,99 @@ Health check
 `GET /` و `GET /users-page`
 
 UI ساده برای تست دستی
+
+### نمونه Request و Response
+تست ۱: سوال درباره خدمات VIP
+
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"12345","name":"Ali","message":"خدمات VIP راستاد چیست؟"}'
+  ```
+
+تست ۲: راهنمایی ثبت‌نام صرافی
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"67890","name":"Sara","message":"چطور در صرافی ثبت‌نام کنم؟"}'
+  ```
+تست ۳: درخواست همکاری KOL
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"11111","name":"Reza","message":"می‌خواهم KOL بشم"}'
+  ```
+تست ۴: مشکل پرداخت
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"22222","name":"Maryam","message":"پول دادم ولی اشتراکم فعال نشده"}'
+  ```
+تست ۵: سوال عمومی
+```bash
+curl -X POST http://localhost:8000/api/message \
+  -H "Content-Type: application/json" \
+  -d '{"user_id":"33333","name":"Hossein","message":"Trade Assist چیست؟"}'
+  ```
+
+###   ❌ موارد پیاده‌سازی نشده و دلایل
+##### ۱. احراز هویت (Authentication)
+دلیل: طبق توضیحات تسک: "سیستم احراز هویت کامل لازم نیست"
+در صورت نیاز، افزودن JWT یا OAuth2 با FastAPI بسیار ساده است.
+
+##### ۲. ربات تلگرام
+دلیل: محدودیت زمان (۲ روز). یک UI ساده مبتنی بر وب جایگزین شده است.
+توجه: تجربه ساخت ربات تلگرام را دارم (پروژه Tradeboard). برای اتصال کافیست webhook تلگرام را به POST /api/message متصل کنم. پیاده‌سازی کامل آن حدود ۲-۳ ساعت زمان می‌برد.
+
+##### ۳. Vector DB (FAISS / Chroma)
+دلیل: جستجوی keyword-based نیازمندی‌های MVP را پوشش می‌دهد.
+ارتقا به FAISS با افزودن sentence-transformers و index کردن فایل‌ها قابل انجام است.
+
+##### ۴. Redis برای Rate Limiting
+دلیل: Rate limit در حال حاضر in-memory پیاده‌سازی شده که برای MVP کافی است.
+برای Production: جایگزینی با Redis + fastapi-limiter توصیه می‌شود.
+
+##### ۵. CI/CD Pipeline
+دلیل: طبق تسک: "CI/CD کامل لازم نیست"
+
+##### ۶. احراز هویت / پرداخت / اتصال واقعی CRM
+دلیل: همگی طبق تسک "لازم نیستند"
+
+### 🔄 نحوه تعویض Mock با Claude واقعی
+سیستم به گونه‌ای طراحی شده که تنها با تغییر یک متغیر محیطی می‌توان از Mock به Claude API واقعی سوئیچ کرد:
+
+مرحله ۱: دریافت API Key از Anthropic
+مراجعه به https://console.anthropic.com
+
+ثبت‌نام و دریافت API Key
+
+مرحله ۲: تنظیم متغیرهای محیطی
+فایل .env را ویرایش کنید:
+
+env
+```text
+LLM_PROVIDER=claude
+CLAUDE_API_KEY=sk-ant-api03-your-actual-key-here
+```
+مرحله ۳: راه‌اندازی مجدد
+```bash
+docker-compose down
+docker-compose up -d
+```
+آنچه تغییر می‌کند:
+بدون تغییر کد — سرویس llm_service.py به صورت خودکار کلاینت Claude را initialize می‌کند
+
+System prompt فارسی با اطلاعات راستاد + دانش پایه ساخته می‌شود
+
+پاسخ‌ها توسط Claude 3.5 Sonnet تولید می‌شود
+
+در صورت خطای API، fallback خودکار به mock انجام می‌شود
+
+### تفاوت Mock و Claude:
+ویژگی	Mock	Claude
+پاسخ‌ها	از پیش تعریف‌شده	پویا و context-aware
+تنوع پاسخ	محدود	بالا
+نیاز به API Key	خیر	بله
+هزینه	رایگان	Pay-per-token
+Fallback	-	به mock در صورت خطا
+کاربرد	توسعه و تست	Production
