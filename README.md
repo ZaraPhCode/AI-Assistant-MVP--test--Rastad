@@ -1,24 +1,258 @@
-# دستیار هوشمند لید و پشتیبانی راستاد (MVP)
+# 🚀 دستیار هوشمند لید و پشتیبانی راستاد (MVP)
 
-پروژه یک سرویس ساده مبتنی بر FastAPI است که پیام کاربران را دریافت، دسته‌بندی، و بر اساس دانش داخلی پاسخ می‌دهد. اطلاعات کاربر و مکالمات در دیتابیس ذخیره می‌شود.
+<div dir="rtl">
 
-## تکنولوژی‌ها
-- **Backend:** Python 3.12 + FastAPI
-- **Database:** PostgreSQL 
-- **LLM:** Mock (قابل تعویض با Claude/OpenAI)
-- **Containerization:** Docker + Docker Compose
+پروژه‌ای مبتنی بر **FastAPI** که به عنوان یک دستیار هوشمند برای مدیریت پیام‌های کاربران، دسته‌بندی خودکار درخواست‌ها (Intent Classification)، تشخیص سگمنت کاربر، و پاسخ‌دهی هوشمند بر اساس **دانش داخلی راستاد** طراحی شده است. این سیستم می‌تواند با **Claude API** (Anthropic) یا به صورت **Mock** کار کند و آماده اتصال به ربات تلگرام، CRM و دیگر کانال‌های ارتباطی است.
 
-## نصب و اجرا
+---
 
-### با Docker Compose (پیشنهادی)
-```bash
-docker-compose build
-docker-compose up -d
+## 📋 فهرست مطالب
+- [معماری و ساختار پروژه](#-معماری-و-ساختار-پروژه)
+- [تکنولوژی‌های استفاده شده](#-تکنولوژی‌های-استفاده-شده)
+- [منطق پردازش پیام](#-منطق-پردازش-پیام)
+- [نصب و اجرا](#-نصب-و-اجرا)
+- [API Endpoints](#-api-endpoints)
+- [نمونه Request و Response](#-نمونه-request-و-response)
+- [تست پروژه](#-تست-پروژه)
+- [ویژگی‌های پیاده‌سازی شده (بر اساس معیارهای تسک)](#-ویژگی‌های-پیاده‌سازی-شده-بر-اساس-معیارهای-تسک)
+- [موارد پیاده‌سازی نشده و دلایل](#-موارد-پیاده‌سازی-نشده-و-دلایل)
+- [نحوه تعویض Mock با Claude واقعی](#-نحوه-تعویض-mock-با-claude-واقعی)
+- [سوالات احتمالی جلسه بررسی](#-سوالات-احتمالی-جلسه-بررسی)
+- [محدودیت‌ها و بهبودهای آتی](#-محدودیت‌ها-و-بهبودهای-آتی)
+
+---
+
+## 🏗️ معماری و ساختار پروژه
+
+### ساختار پوشه‌ها
+rastad-ai-assistant/
+├── app/ # کد اصلی برنامه
+│ ├── init.py
+│ ├── main.py # نقطه ورود FastAPI، middlewareها، rate limiter
+│ ├── config.py # تنظیمات و متغیرهای محیطی
+│ ├── database.py # اتصال به دیتابیس (PostgreSQL/SQLite)
+│ ├── models.py # مدل‌های SQLAlchemy (User, Message)
+│ ├── schemas.py # Pydantic models برای validation
+│ ├── routers/ # مسیرهای API
+│ │ ├── messages.py # POST /message و POST /message-form
+│ │ └── users.py # GET /users و GET /users/{id}/messages
+│ ├── services/ # لایه منطق کسب‌وکار
+│ │ ├── classifier.py # تشخیص intent و segment (rule-based + LLM fallback)
+│ │ ├── knowledge_service.py # جستجو در فایل‌های دانش
+│ │ └── llm_service.py # سرویس LLM (mock, claude, openai)
+│ ├── knowledge_base/ # فایل‌های دانش داخلی راستاد
+│ │ ├── rastad_services.txt
+│ │ ├── vip_products.txt
+│ │ ├── exchange_signup.txt
+│ │ └── kol_program.txt
+│ └── templates/ # قالب‌های HTML برای UI ساده تست
+│ ├── base.html
+│ ├── index.html
+│ └── users.html
+├── tests/ # تست‌های خودکار
+│ └── test_endpoints.py
+├── Dockerfile # تنظیمات Docker برای سرویس app
+├── docker-compose.yml # Docker Compose (app + PostgreSQL)
+├── requirements.txt # وابستگی‌های Python
+├── .env.example # نمونه فایل متغیرهای محیطی
+├── .gitignore
+├── pytest.ini # تنظیمات pytest
+└── README.md # همین فایل
+
+
+### نمودار جریان پردازش پیام
+کاربر → [UI/API] → POST /api/message
+↓
+┌─────────────────┐
+│ Validation │ ← Pydantic (user_id, name, message اجباری)
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Classifier │ ← Rule-based (keyword matching)
+│ تشخیص intent │ Fallback: Claude API (در صورت فعال بودن)
+│ تشخیص segment │
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Knowledge Base │ ← جستجوی keyword-based در فایل‌های txt
+│ بازیابی دانش │ قابلیت ارتقا به Vector DB (FAISS)
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ LLM Service │ ← Mock: پاسخ‌های از پیش تعریف‌شده
+│ تولید پاسخ │ Claude: فراخوانی Claude API
+│ │ Fallback خودکار به mock در صورت خطا
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Database │ ← ذخیره User (upsert) + Message
+│ PostgreSQL │
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Logging │ ← ثبت user_id, intent, segment, خطاها
+└────────┬────────┘
+↓
+پاسخ JSON به کاربر
+
+
+---
+
+## 🔧 تکنولوژی‌های استفاده شده
+
+| دسته | تکنولوژی | توضیح |
+|------|----------|--------|
+| **Backend Framework** | FastAPI 0.115 | async، سریع، با validation خودکار |
+| **زبان برنامه‌نویسی** | Python 3.12 | |
+| **دیتابیس** | PostgreSQL 15 | (SQLite هم پشتیبانی می‌شود) |
+| **ORM** | SQLAlchemy 2.0 | مدیریت migrations و queries |
+| **Validation** | Pydantic 2.10 | اعتبارسنجی خودکار ورودی‌ها |
+| **LLM Provider** | Claude API / Mock | قابل تعویض بدون تغییر کد |
+| **Containerization** | Docker + Docker Compose | |
+| **Web Server** | Uvicorn | ASGI server |
+| **Testing** | pytest + TestClient | |
+| **Templating** | Jinja2 | برای UI تست |
+| **Search** | Keyword-based | (قابل ارتقا به FAISS) |
+
+---
+
+## 🧠 منطق پردازش پیام
+
+### 1️⃣ دریافت و اعتبارسنجی
+
+وقتی یک پیام از طریق `POST /api/message` دریافت می‌شود:
+
+**Validation (Pydantic):**
+- `user_id`: نمی‌تواند خالی باشد (`min_length=1`)
+- `name`: نمی‌تواند خالی باشد (`min_length=1`)
+- `message`: نمی‌تواند خالی باشد (`min_length=1`)
+
+در صورت عدم رعایت، خطای **422 Validation Error** برگردانده می‌شود.
+
+### 2️⃣ تشخیص Intent و Segment
+
+**سیستم Rule-based (کلیدواژه‌ای):**
+
+| Intent | کلمات کلیدی | Segment |
+|--------|-------------|---------|
+| `vip_question` | vip, خدمات ویژه, سرویس ویژه, تحلیل اختصاصی | `vip_interest` |
+| `exchange_registration` | ثبت‌نام, صرافی, ساختن حساب, احراز هویت | `exchange_signup` |
+| `kol_collaboration` | kol, همکاری, تولید محتوا | `kol_candidate` |
+| `support_request` | مشکل, پرداخت, عضویت, فعال نشدن, خطا, پشتیبانی | `support_needed` |
+| `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
+| `unknown` | (هیچ‌کدام) | `new_user` |
+
+**Fallback به Claude:**
+اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
+
+### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
+
+سیستم کلمات پیام کاربر را با محتوای ۴ فایل متنی در `app/knowledge_base/` مقایسه می‌کند:
+
+- `rastad_services.txt` — خدمات کلی راستاد
+- `vip_products.txt` — خدمات ویژه
+- `exchange_signup.txt` — راهنمای ثبت‌نام صرافی
+- `kol_program.txt` — برنامه همکاری KOL
+
+**روش جستجو:** Keyword matching (یافتن فایل‌هایی که حداقل یک کلمه مشترک با query دارند)
+
+### 4️⃣ تولید پاسخ
+
+#### حالت Mock (پیش‌فرض):
+پاسخ‌ها بر اساس intent و دانش بازیابی‌شده ساخته می‌شوند:
+
+```python
+if intent == "vip_question":
+    return f"خدمات VIP راستاد شامل: {knowledge}"
+elif intent == "support_request":
+    return "درخواست شما دریافت شد. تیم پشتیبانی به زودی با شما تماس خواهد گرفت."
 ```
 
-### اجرای تست ها
-برای اجرای تست اندپوینت ها با pytest از درون کانتینر:
-```bash
+### حالت Claude:
+یک System Prompt فارسی با اطلاعات کامل از راستاد و دانش پایه ساخته می‌شود
+
+پیام کاربر + System Prompt به Claude 3.5 Sonnet ارسال می‌شود
+
+پاسخ تولیدشده برگردانده می‌شود
+
+در صورت خطا (قطعی API، timeout)، به صورت خودکار به Mock fallback می‌کند
+
+#### 5️⃣ ذخیره‌سازی
+User (upsert):
+
+اگر کاربر جدید باشد: ایجاد کاربر با segment تشخیص‌داده‌شده
+
+اگر کاربر وجود داشته باشد: بروزرسانی name، segment و last_seen_at
+
+#### Message:
+
+ذخیره پیام کاربر، پاسخ دستیار، intent، needs_human_support
+
+# 📦 نصب و اجرا
+پیش‌نیازها
+Docker و Docker Compose
+
+(برای اجرای محلی: Python 3.12 + PostgreSQL)
+
+### روش ۱: اجرا با Docker Compose (پیشنهادی)
+
+```
+# کلون کردن پروژه
+git clone https://github.com/ZaraPhCode/AI-Assistant-MVP--test--Rastad.git
+cd AI-Assistant-MVP--test--Rastad
+
+# ساخت و اجرا
+docker-compose build
+docker-compose up -d
+
+# بررسی وضعیت
+docker-compose ps
+```
+
+سپس در مرورگر باز کنید: http://localhost:8000
+
+UI تست در همین آدرس قابل دسترسی است.
+
+### روش ۲: اجرای محلی (بدون Docker)
+
+```
+# نصب وابستگی‌ها
+pip install -r requirements.txt
+
+# تنظیم متغیرهای محیطی (کپی از .env.example)
+cp .env.example .env
+# فایل .env را با تنظیمات خود ویرایش کنید
+
+# اجرا
+uvicorn app.main:app --reload
+```
+
+### روش ۳: اجرای تست‌ها
+از داخل کانتینر Docker:
+```
 docker exec -it rastad-job-application-app-1 bash
-pytest test/test_endpoints.py
+pytest tests/test_endpoints.py -v
+```
+
+اجرای یک تست خاص:
+```
+docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py::test_vip_message -v
+```
+
+اجرای پنج تست اصلی:
+```
+docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -k "test_vip_message or test_exchange_registration or test_kol_collaboration or test_support_request or test_general_question"
+```
+
+# 📡 API Endpoints
+POST /api/message
+پردازش پیام کاربر و دریافت پاسخ
+Request Body:
+
+```json
+{
+  "user_id": "12345",
+  "name": "Ali",
+  "message": "خدمات VIP راستاد چیست؟"
+}
 ```
