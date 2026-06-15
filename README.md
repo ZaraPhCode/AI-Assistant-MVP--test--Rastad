@@ -325,6 +325,8 @@ Response (200):
 
 لیست تمام کاربران ثبت‌شده
 
+Request Body:  بدون بادی
+
 Response (200):
 ```json
 [
@@ -341,6 +343,8 @@ Response (200):
 `GET /api/users/{user_id}/messages`  
 
 تاریخچه پیام‌های یک کاربر خاص
+
+Request Body:  بدون بادی
 
 Response (200):
 
