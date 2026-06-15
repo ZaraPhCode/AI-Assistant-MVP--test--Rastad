@@ -52,53 +52,14 @@ rastad-ai-assistant/
 │ ├── index.html
 │ └── users.html
 ├── tests/ # تست‌های خودکار
+| ├── pytest.ini # تنظیمات pytest
 │ └── test_endpoints.py
 ├── Dockerfile # تنظیمات Docker برای سرویس app
 ├── docker-compose.yml # تنظیمات  کانتینرهای یک شبکه در Docker Compose (app + PostgreSQL database)
 ├── requirements.txt # وابستگی‌های Python
-├── .env.example # نمونه فایل متغیرهای محیطی
-├── .gitignore
-├── pytest.ini # تنظیمات pytest
+├── .env # نمونه فایل متغیرهای محیطی
 └── README.md # همین فایل
 ```
-
-### نمودار جریان پردازش پیام
-
-```text
-User → [UI/API] → POST /api/message
-↓
-┌─────────────────┐
-│ Validation │ ← Pydantic (required: user_id, name, message)
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Classifier │ ← Rule-based (keyword matching)
-│ │ Fallback: Claude API (if enabled)
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Knowledge Base │ ← Keyword search in .txt files
-│ │ Upgrade path: Vector DB (FAISS)
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ LLM Service │ ← Mock: Template-based replies
-│ │ Claude: Claude API call
-│ │ Auto-fallback to mock on error
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Database │ ← Upsert User + Insert Message
-│ PostgreSQL │
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Logging │ ← Log user_id, intent, segment, errors
-└────────┬────────┘
-↓
-JSON response to user
-```
-
 
 ## تکنولوژی‌های استفاده شده
 
