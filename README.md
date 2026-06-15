@@ -66,33 +66,33 @@ rastad-ai-assistant/
 کاربر → [UI/API] → POST /api/message
 ↓
 ┌─────────────────┐
-│ Validation │ ← Pydantic (user_id, name, message اجباری)
+│ Validation      │ ← Pydantic (user_id, name, message اجباری)
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Classifier │ ← Rule-based (keyword matching)
-│ تشخیص intent │ Fallback: Claude API (در صورت فعال بودن)
-│ تشخیص segment │
+│ Classifier      │ ← Rule-based (keyword matching)
+│ تشخیص intent    │ Fallback: Claude API (در صورت فعال بودن)
+│ تشخیص segment   │
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Knowledge Base │ ← جستجوی keyword-based در فایل‌های txt
-│ بازیابی دانش │ قابلیت ارتقا به Vector DB (FAISS)
+│ Knowledge Base  │ ← جستجوی keyword-based در فایل‌های txt
+│ بازیابی دانش │قابلیت ارتقا به Vector DB (FAISS)
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ LLM Service │ ← Mock: پاسخ‌های از پیش تعریف‌شده
-│ تولید پاسخ │ Claude: فراخوانی Claude API
+│ LLM Service     │ ← Mock: پاسخ‌های از پیش تعریف‌شده
+│ تولید پاسخ     │ Claude: فراخوانی Claude API
 │ │ Fallback خودکار به mock در صورت خطا
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Database │ ← ذخیره User (upsert) + Message
-│ PostgreSQL │
+│ Database        │ ← ذخیره User (upsert) + Message
+│ PostgreSQL      │
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Logging │ ← ثبت user_id, intent, segment, خطاها
+│ Logging         │ ← ثبت user_id, intent, segment, خطاها
 └────────┬────────┘
 ↓
 پاسخ JSON به کاربر
