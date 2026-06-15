@@ -457,4 +457,3 @@ docker-compose up -d
 | Rate limit in-memory | MVP | Redis + fastapi-limiter |
 | عدم احراز هویت | طبق تسک لازم نبود | JWT Authentication |
 | پاسخ‌های mock با تنوع کم | حالت mock | فعال‌سازی Claude API |
-
