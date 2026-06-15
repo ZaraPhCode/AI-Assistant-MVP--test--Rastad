@@ -145,7 +145,7 @@ JSON response to user
 <div dir='rtl'>
 <strong>Fallback به Claude:</strong>
 </div>
-اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
+اگر LLM_PROVIDER=claude باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
 ### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
 
@@ -179,8 +179,8 @@ elif intent == "support_request":
 
 در صورت خطا (قطعی API، timeout)، به صورت خودکار به Mock fallback می‌کند
 
-#### 5️⃣ ذخیره‌سازی
-User (upsert):
+### 5️⃣ ذخیره‌سازی
+#### User:
 
 اگر کاربر جدید باشد: ایجاد کاربر با segment تشخیص‌داده‌شده
 
