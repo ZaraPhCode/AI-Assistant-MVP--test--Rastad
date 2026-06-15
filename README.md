@@ -232,6 +232,12 @@ docker-compose up -d
 
 # بررسی وضعیت
 docker-compose ps
+
+# مشاهده لاگهای اپ بصورت لایو
+docker-compose logs -f app
+
+# اجرای کامند دلخواه در کانتینر اپ
+docker exec -it rastad-job-application-app-1 bash
 ```
 
 سپس در مرورگر باز کنید: http://localhost:8000
