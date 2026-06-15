@@ -25,43 +25,42 @@
 
 ### ساختار پوشه‌ها
 ```
-AI_Assistant_MVP_test_Rastad/
-├── app/ # Main application code
+rastad-ai-assistant/
+├── app/ # کد اصلی برنامه
 │ ├── init.py
-│ ├── main.py # FastAPI entry point, middleware, rate limiter
-│ ├── config.py # Environment variables and settings
-│ ├── database.py # Database connection (PostgreSQL/SQLite)
-│ ├── models.py # SQLAlchemy models (User, Message)
-│ ├── schemas.py # Pydantic models for validation
-│ ├── routers/ # API routes
-│ │ ├── messages.py # POST /message and POST /message-form
-│ │ └── users.py # GET /users and GET /users/{id}/messages
-│ ├── services/ # Business logic layer
-│ │ ├── classifier.py # Intent & segment detection (rule-based + LLM fallback)
-│ │ ├── knowledge_service.py # Knowledge base file search
-│ │ └── llm_service.py # LLM service (mock, claude, openai)
-│ ├── knowledge_base/ # Rastad internal knowledge files
+│ ├── main.py # نقطه ورود FastAPI، middlewareها، rate limiter
+│ ├── config.py # تنظیمات و متغیرهای محیطی
+│ ├── database.py # اتصال به دیتابیس (PostgreSQL/SQLite)
+│ ├── models.py # مدل‌های SQLAlchemy (User, Message)
+│ ├── schemas.py # Pydantic models برای validation
+│ ├── routers/ # مسیرهای API
+│ │ ├── messages.py # POST /message و POST /message-form
+│ │ └── users.py # GET /users و GET /users/{id}/messages
+│ ├── services/ # لایه منطق کسب‌وکار
+│ │ ├── classifier.py # تشخیص intent و segment (rule-based + LLM fallback)
+│ │ ├── knowledge_service.py # جستجو در فایل‌های دانش
+│ │ └── llm_service.py # سرویس LLM (mock, claude, openai)
+│ ├── knowledge_base/ # فایل‌های دانش داخلی راستاد
 │ │ ├── rastad_services.txt
 │ │ ├── vip_products.txt
 │ │ ├── exchange_signup.txt
 │ │ └── kol_program.txt
-│ └── templates/ # HTML templates for simple test UI
+│ └── templates/ # قالب‌های HTML برای UI ساده تست
 │ ├── base.html
 │ ├── index.html
 │ └── users.html
-├── tests/ # Automated tests
+├── tests/ # تست‌های خودکار
 │ └── test_endpoints.py
-├── Dockerfile # Docker config for app service
+├── Dockerfile # تنظیمات Docker برای سرویس app
 ├── docker-compose.yml # Docker Compose (app + PostgreSQL database)
-├── requirements.txt # Python dependencies
-├── .env.example # Environment variables template
+├── requirements.txt # وابستگی‌های Python
+├── .env.example # نمونه فایل متغیرهای محیطی
 ├── .gitignore
-├── pytest.ini # Pytest configuration
-└── README.md # This file
+├── pytest.ini # تنظیمات pytest
+└── README.md # همین فایل
 ```
 
 ### نمودار جریان پردازش پیام
-
 
 ```text
 User → [UI/API] → POST /api/message
