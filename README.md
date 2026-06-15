@@ -66,13 +66,13 @@ rastad-ai-assistant/
 کاربر → [UI/API] → POST /api/message
 ↓
 ┌─────────────────┐
-│ Validation      │      ← Pydantic (user_id, name, message اجباری)
+│ Validation │      ← Pydantic (user_id, name, message اجباری)
 └────────┬────────┘
 ↓
 ┌─────────────────┐
-│ Classifier      │ ← Rule-based (keyword matching)
-│ تشخیص intent    │ Fallback: Claude API (در صورت فعال بودن)
-│ تشخیص segment   │
+│ Classifier │     ← Rule-based (keyword matching)
+│ تشخیص intent │    Fallback: Claude API (در صورت فعال بودن)
+│ تشخیص segment│
 └────────┬────────┘
 ↓
 ┌─────────────────┐
