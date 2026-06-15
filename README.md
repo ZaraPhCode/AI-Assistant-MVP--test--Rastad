@@ -145,7 +145,7 @@ JSON response to user
 <div dir='rtl'>
 <strong>Fallback به Claude:</strong>
 </div>
-اگر **LLM_PROVIDER=claude** باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
+اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
 ### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
 
