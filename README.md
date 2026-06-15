@@ -1,4 +1,4 @@
-# دستیار هوشمند لید و پشتیبانی راستاد (MVP)
+# دستیار هوشمند لید و پشتیبانی (MVP)
 
 <div dir="rtl">
 
@@ -133,7 +133,7 @@ rastad-ai-assistant/
 
 ```python
 if intent == "vip_question":
-    return f"خدمات VIP راستاد شامل: {knowledge}"
+    return f"خدمات VIP شامل: {knowledge}"
 elif intent == "support_request":
     return "درخواست شما دریافت شد. تیم پشتیبانی به زودی با شما تماس خواهد گرفت."
 ```
@@ -269,7 +269,7 @@ docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -
 ```bash
 curl -X POST http://localhost:8000/api/message \
   -H "Content-Type: application/json" \
-  -d '{"user_id":"12345","name":"Ali","message":"خدمات VIP راستاد چیست؟"}'
+  -d '{"user_id":"12345","name":"Ali","message":"خدمات VIP چیست؟"}'
   ```
 
 تست ۲: راهنمایی ثبت‌نام صرافی
@@ -307,14 +307,14 @@ Request Body:
 {
   "user_id": "12345",
   "name": "Ali",
-  "message": "خدمات VIP راستاد چیست؟"
+  "message": "خدمات VIP چیست؟"
 }
 ```
 
 Response (200):
 ```json
 {
-  "reply": "خدمات VIP راستاد شامل: تحلیل‌های اختصاصی روزانه بازار، راهنمایی معاملاتی ویژه اعضا، ...",
+  "reply": "خدمات VIP شامل: تحلیل‌های اختصاصی روزانه بازار، راهنمایی معاملاتی ویژه اعضا، ...",
   "intent": "vip_question",
   "user_segment": "vip_interest",
   "needs_human_support": false
@@ -353,8 +353,8 @@ Response (200):
   {
     "id": 1,
     "user_id": "12345",
-    "user_message": "خدمات VIP راستاد چیست؟",
-    "assistant_reply": "خدمات VIP راستاد شامل...",
+    "user_message": "خدمات VIP چیست؟",
+    "assistant_reply": "خدمات VIP شامل...",
     "intent": "vip_question",
     "needs_human_support": false,
     "created_at": "2025-03-24T11:37:21"
