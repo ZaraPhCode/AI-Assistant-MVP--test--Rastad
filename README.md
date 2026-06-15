@@ -147,11 +147,6 @@ JSON response to user
 </div>
 اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
-***نکته فنی***: 
-<div dir='rtl'>
-در classifier.py، تابع _classify_with_llm() از llm_service.detect_intent() استفاده می‌کند که مستقیماً Claude API را با یک system prompt طبقه‌بندی intent فراخوانی می‌کند. Claude فقط نام intent را برمی‌گرداند (بدون توضیح اضافه). در صورت خطای API، "unknown" برگردانده می‌شود و کاربر پاسخ عمومی دریافت می‌کند.
-</div>
-
 ### 3️⃣ جستجو در دانش داخلی (Knowledge Base)
 
 سیستم کلمات پیام کاربر را با محتوای ۴ فایل متنی در `app/knowledge_base/` مقایسه می‌کند:
