@@ -408,11 +408,22 @@ System prompt فارسی با اطلاعات راستاد + دانش پایه س
 
 در صورت خطای API، fallback خودکار به mock انجام می‌شود
 
-### تفاوت Mock و Claude:
-ویژگی	Mock	Claude
-پاسخ‌ها	از پیش تعریف‌شده	پویا و context-aware
-تنوع پاسخ	محدود	بالا
-نیاز به API Key	خیر	بله
-هزینه	رایگان	Pay-per-token
-Fallback	-	به mock در صورت خطا
-کاربرد	توسعه و تست	Production
+### محدودیت‌ها و بهبودهای آتی
+
+| محدودیت | دلیل | راه حل |
+|--------|-------------|---------|
+| جستجوی keyword-based	 | پیاده‌سازی سریع | Vector Search با FAISS + Sentence Transformers |
+| Rate limit in-memory | MVP | Redis + fastapi-limiter |
+| عدم احراز هویت | طبق تسک لازم نبود | JWT Authentication |
+| پاسخ‌های mock با تنوع کم | حالت mock | فعال‌سازی Claude API |
+| `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
+| `unknown` | (هیچ‌کدام) | `new_user` |
+
+```توسعه‌دهنده
+Zahra Etesami
+
+GitHub: ZaraPhCode
+
+تجربه: AI Product Manager، هم‌بنیان‌گذار Tradeboard، متخصص ML/NLP
+
+</div> ```
