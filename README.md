@@ -247,7 +247,8 @@ docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -
 ```
 
 # 📡 API Endpoints
-POST /api/message
+`POST /api/message`  
+
 پردازش پیام کاربر و دریافت پاسخ
 Request Body:
 ```json
@@ -268,7 +269,8 @@ Response (200):
 }
 ```
 
-GET /api/users
+`GET /api/users`  
+
 لیست تمام کاربران ثبت‌شده
 
 Response (200):
@@ -284,7 +286,8 @@ Response (200):
 ]
 ```
 
-GET /api/users/{user_id}/messages
+`GET /api/users/{user_id}/messages`  
+
 تاریخچه پیام‌های یک کاربر خاص
 
 Response (200):
@@ -311,7 +314,9 @@ Error (404):
 ```
 
 `GET /api/`
+
 Health check
 
-GET / و GET /users-page
+`GET /` و `GET /users-page`
+
 UI ساده برای تست دستی
