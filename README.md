@@ -62,6 +62,7 @@ rastad-ai-assistant/
 ```
 
 ### نمودار جریان پردازش پیام
+```text
 کاربر → [UI/API] → POST /api/message
 ↓
 ┌─────────────────┐
@@ -95,7 +96,7 @@ rastad-ai-assistant/
 └────────┬────────┘
 ↓
 پاسخ JSON به کاربر
-
+```
 
 ---
 
