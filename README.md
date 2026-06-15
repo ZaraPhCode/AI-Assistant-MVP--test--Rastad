@@ -1,4 +1,4 @@
-# 🚀 دستیار هوشمند لید و پشتیبانی راستاد (MVP)
+# دستیار هوشمند لید و پشتیبانی راستاد (MVP)
 
 <div dir="rtl">
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 📋 فهرست مطالب
+## فهرست مطالب
 - [معماری و ساختار پروژه](#-معماری-و-ساختار-پروژه)
 - [تکنولوژی‌های استفاده شده](#-تکنولوژی‌های-استفاده-شده)
 - [منطق پردازش پیام](#-منطق-پردازش-پیام)
@@ -17,12 +17,11 @@
 - [ویژگی‌های پیاده‌سازی شده (بر اساس معیارهای تسک)](#-ویژگی‌های-پیاده‌سازی-شده-بر-اساس-معیارهای-تسک)
 - [موارد پیاده‌سازی نشده و دلایل](#-موارد-پیاده‌سازی-نشده-و-دلایل)
 - [نحوه تعویض Mock با Claude واقعی](#-نحوه-تعویض-mock-با-claude-واقعی)
-- [سوالات احتمالی جلسه بررسی](#-سوالات-احتمالی-جلسه-بررسی)
 - [محدودیت‌ها و بهبودهای آتی](#-محدودیت‌ها-و-بهبودهای-آتی)
 
 ---
 
-## 🏗️ معماری و ساختار پروژه
+## معماری و ساختار پروژه
 
 ### ساختار پوشه‌ها
 ```
@@ -53,7 +52,7 @@ rastad-ai-assistant/
 ├── tests/ # تست‌های خودکار
 │ └── test_endpoints.py
 ├── Dockerfile # تنظیمات Docker برای سرویس app
-├── docker-compose.yml # Docker Compose (app + PostgreSQL)
+├── docker-compose.yml # Docker Compose (app + PostgreSQL database)
 ├── requirements.txt # وابستگی‌های Python
 ├── .env.example # نمونه فایل متغیرهای محیطی
 ├── .gitignore
@@ -62,6 +61,7 @@ rastad-ai-assistant/
 ```
 
 ### نمودار جریان پردازش پیام
+<div dir="ltr">
 ```text
 کاربر → [UI/API] → POST /api/message
 ↓
@@ -97,10 +97,10 @@ rastad-ai-assistant/
 ↓
 پاسخ JSON به کاربر
 ```
-
+</div>
 ---
 
-## 🔧 تکنولوژی‌های استفاده شده
+## تکنولوژی‌های استفاده شده
 
 | دسته | تکنولوژی | توضیح |
 |------|----------|--------|
@@ -118,7 +118,7 @@ rastad-ai-assistant/
 
 ---
 
-## 🧠 منطق پردازش پیام
+## منطق پردازش پیام
 
 ### 1️⃣ دریافت و اعتبارسنجی
 
@@ -190,7 +190,7 @@ User (upsert):
 
 ذخیره پیام کاربر، پاسخ دستیار، intent، needs_human_support
 
-# 📦 نصب و اجرا
+# نصب و اجرا
 پیش‌نیازها
 Docker و Docker Compose
 
@@ -246,7 +246,7 @@ docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py::tes
 docker exec -it rastad-job-application-app-1 pytest tests/test_endpoints.py -v -k "test_vip_message or test_exchange_registration or test_kol_collaboration or test_support_request or test_general_question"
 ```
 
-# 📡 API Endpoints
+# API Endpoints
 `POST /api/message`  
 
 پردازش پیام کاربر و دریافت پاسخ
@@ -378,7 +378,7 @@ curl -X POST http://localhost:8000/api/message \
 ##### ۶. احراز هویت / پرداخت / اتصال واقعی CRM
 دلیل: همگی طبق تسک "لازم نیستند"
 
-### 🔄 نحوه تعویض Mock با Claude واقعی
+### نحوه تعویض Mock با Claude واقعی
 سیستم به گونه‌ای طراحی شده که تنها با تغییر یک متغیر محیطی می‌توان از Mock به Claude API واقعی سوئیچ کرد:
 
 مرحله ۱: دریافت API Key از Anthropic
@@ -418,12 +418,3 @@ System prompt فارسی با اطلاعات راستاد + دانش پایه س
 | پاسخ‌های mock با تنوع کم | حالت mock | فعال‌سازی Claude API |
 | `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
 | `unknown` | (هیچ‌کدام) | `new_user` |
-
-```توسعه‌دهنده
-Zahra Etesami
-
-GitHub: ZaraPhCode
-
-تجربه: AI Product Manager، هم‌بنیان‌گذار Tradeboard، متخصص ML/NLP
-
-</div> ```
