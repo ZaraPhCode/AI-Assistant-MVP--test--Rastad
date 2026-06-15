@@ -4,7 +4,7 @@
 
 پروژه‌ای مبتنی بر **FastAPI** که به عنوان یک دستیار هوشمند برای مدیریت پیام‌های کاربران، دسته‌بندی خودکار درخواست‌ها (Intent Classification)، تشخیص سگمنت کاربر، و پاسخ‌دهی هوشمند بر اساس **دانش داخلی راستاد** طراحی شده است. این سیستم می‌تواند با **Claude API** (Anthropic) یا به صورت **Mock** کار کند. دارای **Web UI** ساده برای تست و **ربات تلگرام** با منوی تعاملی و پشتیبانی از **ngrok** برای توسعه روی هاست لوکال است.
 
-📱 **ویدیوی دمو:** [مشاهده ویدیو](demo.mp4)
+📱 **ویدیوی دموی عملکرد روبات تلگرام:** [مشاهده ویدیو](demo.mp4)
 
 ---
 
@@ -41,7 +41,7 @@ rastad-ai-assistant/
 │ ├── services/ # لایه منطق کسب‌وکار
 │ │ ├── classifier.py # تشخیص intent و segment (rule-based + LLM fallback)
 │ │ ├── knowledge_service.py # جستجو در فایل‌های دانش
-│ │ └── llm_service.py # سرویس LLM (mock, claude, openai)
+│ │ └── llm_service.py # سرویس LLM (mock, claude)
 │ ├── knowledge_base/ # فایل‌های دانش داخلی راستاد
 │ │ ├── rastad_services.txt
 │ │ ├── vip_products.txt
@@ -54,7 +54,7 @@ rastad-ai-assistant/
 ├── tests/ # تست‌های خودکار
 │ └── test_endpoints.py
 ├── Dockerfile # تنظیمات Docker برای سرویس app
-├── docker-compose.yml # Docker Compose (app + PostgreSQL database)
+├── docker-compose.yml # تنظیمات  کانتینرهای یک شبکه در Docker Compose (app + PostgreSQL database)
 ├── requirements.txt # وابستگی‌های Python
 ├── .env.example # نمونه فایل متغیرهای محیطی
 ├── .gitignore
