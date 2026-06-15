@@ -143,7 +143,7 @@ JSON response to user
 | `unknown` | (هیچ‌کدام) | `new_user` |
 
 <div dir='rtl'>
-**Fallback به Claude:**
+<strong>Fallback به Claude:</strong>
 </div>
 اگر `LLM_PROVIDER=claude` باشد و rule-based نتواند intent را تشخیص دهد، پیام به Claude API ارسال می‌شود تا intent را تشخیص دهد.
 
