@@ -9,6 +9,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install pytest
 RUN pip install anthropic==0.39.0
+RUN pip install requests==2.32.3
 
 # Set Python path
 ENV PYTHONPATH=/app

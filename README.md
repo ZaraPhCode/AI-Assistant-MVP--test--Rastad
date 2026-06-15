@@ -2,24 +2,27 @@
 
 <div dir="rtl">
 
-پروژه‌ای مبتنی بر **FastAPI** که به عنوان یک دستیار هوشمند برای مدیریت پیام‌های کاربران، دسته‌بندی خودکار درخواست‌ها (Intent Classification)، تشخیص سگمنت کاربر، و پاسخ‌دهی هوشمند بر اساس **دانش داخلی راستاد** طراحی شده است. این سیستم می‌تواند با **Claude API** (Anthropic) یا به صورت **Mock** کار کند و آماده اتصال به ربات تلگرام، CRM و دیگر کانال‌های ارتباطی است.
+پروژه‌ای مبتنی بر **FastAPI** که به عنوان یک دستیار هوشمند برای مدیریت پیام‌های کاربران، دسته‌بندی خودکار درخواست‌ها (Intent Classification)، تشخیص سگمنت کاربر، و پاسخ‌دهی هوشمند بر اساس **دانش داخلی راستاد** طراحی شده است. این سیستم می‌تواند با **Claude API** (Anthropic) یا به صورت **Mock** کار کند. دارای **Web UI** ساده برای تست و **ربات تلگرام** با منوی تعاملی و پشتیبانی از **ngrok** برای توسعه محلی است.
+
+📱 **ویدیوی دمو:** [مشاهده ویدیو](demo.mp4)
 
 ---
 
-## فهرست مطالب
+## 📋 فهرست مطالب
 - [معماری و ساختار پروژه](#-معماری-و-ساختار-پروژه)
 - [تکنولوژی‌های استفاده شده](#-تکنولوژی‌های-استفاده-شده)
 - [منطق پردازش پیام](#-منطق-پردازش-پیام)
 - [نصب و اجرا](#-نصب-و-اجرا)
+- [راه‌اندازی ربات تلگرام با ngrok](#-راه‌اندازی-ربات-تلگرام-با-ngrok)
 - [API Endpoints](#-api-endpoints)
 - [نمونه Request و Response](#-نمونه-request-و-response)
 - [تست پروژه](#-تست-پروژه)
-- [ویژگی‌های پیاده‌سازی شده (بر اساس معیارهای تسک)](#-ویژگی‌های-پیاده‌سازی-شده-بر-اساس-معیارهای-تسک)
+- [ویژگی‌های پیاده‌سازی شده](#-ویژگی‌های-پیاده‌سازی-شده-بر-اساس-معیارهای-تسک)
 - [موارد پیاده‌سازی نشده و دلایل](#-موارد-پیاده‌سازی-نشده-و-دلایل)
 - [نحوه تعویض Mock با Claude واقعی](#-نحوه-تعویض-mock-با-claude-واقعی)
+- [سوالات احتمالی جلسه بررسی](#-سوالات-احتمالی-جلسه-بررسی)
 - [محدودیت‌ها و بهبودهای آتی](#-محدودیت‌ها-و-بهبودهای-آتی)
 
----
 
 ## معماری و ساختار پروژه
 
@@ -33,6 +36,7 @@ rastad-ai-assistant/
 │ ├── database.py # اتصال به دیتابیس (PostgreSQL/SQLite)
 │ ├── models.py # مدل‌های SQLAlchemy (User, Message)
 │ ├── schemas.py # Pydantic models برای validation
+| ├── telegram.py # Telegram bot (menus, state machine, webhook handler)
 │ ├── routers/ # مسیرهای API
 │ │ ├── messages.py # POST /message و POST /message-form
 │ │ └── users.py # GET /users و GET /users/{id}/messages
@@ -108,6 +112,8 @@ JSON response to user
 | **ORM** | SQLAlchemy 2.0 | مدیریت migrations و queries |
 | **Validation** | Pydantic 2.10 | اعتبارسنجی خودکار ورودی‌ها |
 | **LLM Provider** | Claude API / Mock | قابل تعویض بدون تغییر کد |
+| **Messaging** | Telegram Bot API | ربات تعاملی با منو و state machine |
+| **Tunneling** | ngrok | اتصال webhook تلگرام در محیط local |
 | **Containerization** | Docker + Docker Compose | |
 | **Web Server** | Uvicorn | ASGI server |
 | **Testing** | pytest + TestClient | |
@@ -120,7 +126,10 @@ JSON response to user
 
 ### 1️⃣ دریافت و اعتبارسنجی
 
-وقتی یک پیام از طریق `POST /api/message` دریافت می‌شود:
+پیام‌ها از سه کانال قابل دریافت هستند:
+- **Web UI** (Jinja2 templates در `http://localhost:8000`)
+- **REST API** (`POST /api/message`)
+- **Telegram Bot** (webhook به `/webhook/telegram`)
 
 **Validation (Pydantic):**
 - `user_id`: نمی‌تواند خالی باشد (`min_length=1`)
@@ -190,6 +199,64 @@ elif intent == "support_request":
 
 ذخیره پیام کاربر، پاسخ دستیار، intent، needs_human_support
 
+
+
+## 🤖 ربات تلگرام
+
+### ویژگی‌های ربات
+
+- **منوی اصلی** با دو گزینه: "📝 ارسال پیام" و "ℹ️ درباره ربات"
+- **ورود اطلاعات کاربر**: دریافت نام و شناسه کاربری (بدون نیاز به احراز هویت)
+- **منوی دسته‌بندی موضوعات**:
+  - 🌟 خدمات VIP
+  - 📊 ثبت‌نام در صرافی
+  - 🤝 همکاری KOL
+  - 🆘 مشکل پرداخت / پشتیبانی
+  - 📈 Trade Assist
+  - ✍️ پیام دلخواه
+- **State Machine**: ربات وضعیت کاربر را در حافظه نگه می‌دارد (awaiting_name → awaiting_id → menu → awaiting_message)
+- **پاسخ هوشمند**: سوال کاربر مستقیماً به موتور پردازش (classifier + knowledge base + LLM) ارسال می‌شود
+- **ذخیره‌سازی خودکار**: تمام مکالمات در دیتابیس PostgreSQL ذخیره می‌شوند
+
+### راه‌اندازی ربات تلگرام با ngrok
+مرحله ۱: ساخت ربات تلگرام
+در تلگرام، به @BotFather پیام دهید
+
+دستور /newbot را بفرستید
+
+یک نام برای ربات انتخاب کنید (مثلاً: "Rastad AI Assistant")
+
+یک username برای ربات انتخاب کنید (مثلاً: Rastad_test_bot)
+
+Token دریافتی را یادداشت کنید (چیزی شبیه: 123456:ABCdef...)
+
+مرحله ۲: نصب و اجرای ngrok
+از ngrok.com/download نسخه Windows را دانلود کنید
+
+فایل zip را در C:\ngrok\ استخراج کنید
+
+در PowerShell:
+
+```powershell
+cd C:\ngrok
+.\ngrok.exe http 8000
+```
+
+آدرس فوروارد شده را کپی کنید (مثلاً: https://db8f-216-147-121-178.ngrok-free.app)
+
+مرحله ۳: تنظیم فایل .env
+فایل .env را با مقادیر واقعی ویرایش کنید:
+
+```env
+DATABASE_URL=postgresql://rastad:rastadpass@localhost:5432/rastad_db
+LLM_PROVIDER=mock
+CLAUDE_API_KEY=
+TELEGRAM_BOT_TOKEN=8391936987:AAEqtzQNTKfirqCPKVoo03tOQTT5jscwkac
+BASE_URL=https://db8f-216-147-121-178.ngrok-free.app
+SET_TELEGRAM_WEBHOOK=true
+```
+
+
 # نصب و اجرا
 پیش‌نیازها:
 
@@ -213,6 +280,8 @@ docker-compose ps
 سپس در مرورگر باز کنید: http://localhost:8000
 
  تست از طریق UI ساده در همین آدرس قابل دسترسی است.
+
+
 
 ### اجرای تست‌ها:
 #### از داخل کانتینر Docker:
@@ -345,18 +414,14 @@ UI ساده برای تست دستی
 دلیل: طبق توضیحات تسک: "سیستم احراز هویت کامل لازم نیست"
 در صورت نیاز، افزودن JWT یا OAuth2 با FastAPI بسیار ساده است.
 
-##### ۲. ربات تلگرام
-دلیل: محدودیت زمان (۲ روز). یک UI ساده مبتنی بر وب جایگزین شده است.
-توجه: تجربه ساخت ربات تلگرام را دارم (پروژه Tradeboard). برای اتصال کافیست webhook تلگرام را به POST /api/message متصل کنم. پیاده‌سازی کامل آن حدود ۲-۳ ساعت زمان می‌برد.
-
-##### ۳. استفاده از Redis برای Rate Limiting
+##### ۲. استفاده از Redis برای Rate Limiting
 دلیل: Rate limit در حال حاضر in-memory پیاده‌سازی شده که برای MVP کافی است.
 برای Production: جایگزینی با Redis + fastapi-limiter توصیه می‌شود.
 
-##### ۴. اجرای CI/CD Pipeline
+##### ۳. اجرای CI/CD Pipeline
 دلیل: طبق تسک: "CI/CD کامل لازم نیست"
 
-##### ۵. احراز هویت / پرداخت / اتصال واقعی CRM
+##### ۴. احراز هویت / پرداخت / اتصال واقعی CRM
 دلیل: همگی طبق تسک "لازم نیستند"
 
 ### نحوه تعویض Mock با Claude واقعی
@@ -392,5 +457,4 @@ docker-compose up -d
 | Rate limit in-memory | MVP | Redis + fastapi-limiter |
 | عدم احراز هویت | طبق تسک لازم نبود | JWT Authentication |
 | پاسخ‌های mock با تنوع کم | حالت mock | فعال‌سازی Claude API |
-| `general_info` | راستاد, خدمات, trade assist, دستیار معاملاتی | `general_question` |
-| `unknown` | (هیچ‌کدام) | `new_user` |
+
