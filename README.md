@@ -362,12 +362,7 @@ UI ساده برای تست دستی
 ### نحوه تعویض Mock با Claude واقعی
 سیستم به گونه‌ای طراحی شده که تنها با تغییر یک متغیر محیطی می‌توان از Mock به Claude API واقعی سوئیچ کرد:
 
-مرحله ۱: دریافت API Key از Anthropic
-مراجعه به https://console.anthropic.com
-
-ثبت‌نام و دریافت API Key
-
-مرحله ۲: تنظیم متغیرهای محیطی
+مرحله ۱: تنظیم متغیرهای محیطی
 فایل .env را ویرایش کنید:
 
 env
@@ -375,7 +370,7 @@ env
 LLM_PROVIDER=claude
 CLAUDE_API_KEY=sk-ant-api03-your-actual-key-here
 ```
-مرحله ۳: راه‌اندازی مجدد
+مرحله ۲: راه‌اندازی مجدد
 ```bash
 docker-compose down
 docker-compose up -d
