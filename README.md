@@ -353,7 +353,7 @@ UI ساده برای تست دستی
 دلیل: Rate limit در حال حاضر in-memory پیاده‌سازی شده که برای MVP کافی است.
 برای Production: جایگزینی با Redis + fastapi-limiter توصیه می‌شود.
 
-##### ۴. CI/CD Pipeline
+##### ۴. اجرای CI/CD Pipeline
 دلیل: طبق تسک: "CI/CD کامل لازم نیست"
 
 ##### ۵. احراز هویت / پرداخت / اتصال واقعی CRM
