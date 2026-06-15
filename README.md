@@ -25,80 +25,78 @@
 
 ### ساختار پوشه‌ها
 ```
-rastad-ai-assistant/
-├── app/ # کد اصلی برنامه
+AI_Assistant_MVP_test_Rastad/
+├── app/ # Main application code
 │ ├── init.py
-│ ├── main.py # نقطه ورود FastAPI، middlewareها، rate limiter
-│ ├── config.py # تنظیمات و متغیرهای محیطی
-│ ├── database.py # اتصال به دیتابیس (PostgreSQL/SQLite)
-│ ├── models.py # مدل‌های SQLAlchemy (User, Message)
-│ ├── schemas.py # Pydantic models برای validation
-│ ├── routers/ # مسیرهای API
-│ │ ├── messages.py # POST /message و POST /message-form
-│ │ └── users.py # GET /users و GET /users/{id}/messages
-│ ├── services/ # لایه منطق کسب‌وکار
-│ │ ├── classifier.py # تشخیص intent و segment (rule-based + LLM fallback)
-│ │ ├── knowledge_service.py # جستجو در فایل‌های دانش
-│ │ └── llm_service.py # سرویس LLM (mock, claude, openai)
-│ ├── knowledge_base/ # فایل‌های دانش داخلی راستاد
+│ ├── main.py # FastAPI entry point, middleware, rate limiter
+│ ├── config.py # Environment variables and settings
+│ ├── database.py # Database connection (PostgreSQL/SQLite)
+│ ├── models.py # SQLAlchemy models (User, Message)
+│ ├── schemas.py # Pydantic models for validation
+│ ├── routers/ # API routes
+│ │ ├── messages.py # POST /message and POST /message-form
+│ │ └── users.py # GET /users and GET /users/{id}/messages
+│ ├── services/ # Business logic layer
+│ │ ├── classifier.py # Intent & segment detection (rule-based + LLM fallback)
+│ │ ├── knowledge_service.py # Knowledge base file search
+│ │ └── llm_service.py # LLM service (mock, claude, openai)
+│ ├── knowledge_base/ # Rastad internal knowledge files
 │ │ ├── rastad_services.txt
 │ │ ├── vip_products.txt
 │ │ ├── exchange_signup.txt
 │ │ └── kol_program.txt
-│ └── templates/ # قالب‌های HTML برای UI ساده تست
+│ └── templates/ # HTML templates for simple test UI
 │ ├── base.html
 │ ├── index.html
 │ └── users.html
-├── tests/ # تست‌های خودکار
+├── tests/ # Automated tests
 │ └── test_endpoints.py
-├── Dockerfile # تنظیمات Docker برای سرویس app
+├── Dockerfile # Docker config for app service
 ├── docker-compose.yml # Docker Compose (app + PostgreSQL database)
-├── requirements.txt # وابستگی‌های Python
-├── .env.example # نمونه فایل متغیرهای محیطی
+├── requirements.txt # Python dependencies
+├── .env.example # Environment variables template
 ├── .gitignore
-├── pytest.ini # تنظیمات pytest
-└── README.md # همین فایل
+├── pytest.ini # Pytest configuration
+└── README.md # This file
 ```
 
 ### نمودار جریان پردازش پیام
-<div dir="ltr">
-```text
-کاربر → [UI/API] → POST /api/message
-↓
-┌─────────────────┐
-│ Validation │      ← Pydantic (user_id, name, message اجباری)
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Classifier      │ ← Rule-based (keyword matching)
-│ تشخیص intent    │ Fallback: Claude API (در صورت فعال بودن)
-│ تشخیص segment   │
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Knowledge Base  │ ← جستجوی keyword-based در فایل‌های txt
-│ بازیابی دانش │قابلیت ارتقا به Vector DB (FAISS)
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ LLM Service     │ ← Mock: پاسخ‌های از پیش تعریف‌شده
-│ تولید پاسخ     │ Claude: فراخوانی Claude API
-│ │ Fallback خودکار به mock در صورت خطا
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Database        │ ← ذخیره User (upsert) + Message
-│ PostgreSQL      │
-└────────┬────────┘
-↓
-┌─────────────────┐
-│ Logging         │ ← ثبت user_id, intent, segment, خطاها
-└────────┬────────┘
-↓
-پاسخ JSON به کاربر
 
-</div>```
----
+```text
+User → [UI/API] → POST /api/message
+↓
+┌─────────────────┐
+│ Validation │ ← Pydantic (required: user_id, name, message)
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Classifier │ ← Rule-based (keyword matching)
+│ │ Fallback: Claude API (if enabled)
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Knowledge Base │ ← Keyword search in .txt files
+│ │ Upgrade path: Vector DB (FAISS)
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ LLM Service │ ← Mock: Template-based replies
+│ │ Claude: Claude API call
+│ │ Auto-fallback to mock on error
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Database │ ← Upsert User + Insert Message
+│ PostgreSQL │
+└────────┬────────┘
+↓
+┌─────────────────┐
+│ Logging │ ← Log user_id, intent, segment, errors
+└────────┬────────┘
+↓
+JSON response to user
+```
+
 
 ## تکنولوژی‌های استفاده شده
 
